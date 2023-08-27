@@ -38,7 +38,7 @@ function AddExpenseScreen(props) {
           <View className="flex-row justify-center items-center my-3 mt-5">
             <Image
               className="w-72 h-72"
-              source={require("../assets/images/4.png")}
+              source={require("../assets/images/expenseBanner.png")}
             />
           </View>
           <View classsName="space-y-2 mx-2">
