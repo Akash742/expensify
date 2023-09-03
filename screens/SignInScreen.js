@@ -4,6 +4,7 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import { colors } from '../theme';
 import BackButton from '../components/BackButton';
 import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 function SignInScreen(props) {
     const[ email, setEmail ] = useState('');
@@ -23,6 +24,10 @@ function SignInScreen(props) {
         else
         {
             //Show Error
+            Toast.show({
+              type: 'error',
+              text1: 'Email or Password are required!',
+            });
         }
     }
     return (
