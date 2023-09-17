@@ -4,6 +4,9 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import { colors } from '../theme';
 import BackButton from '../components/BackButton';
 import { useNavigation } from '@react-navigation/native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
+import Toast from 'react-native-toast-message';
 
 function SignUpScreen(props) {
     const[ email, setEmail ] = useState('');
@@ -11,18 +14,22 @@ function SignUpScreen(props) {
 
     const navigation = useNavigation();
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         if(email && password)
         {
             //Good to Go
             console.log("Email: ", email);
             console.log("Password: ", password);
-            
-            navigation.navigate('Home');
+
+            await createUserWithEmailAndPassword(auth, email, password);
         }
         else
         {
             //Show Error
+            Toast.show({
+                type: 'error',
+                text1: 'Email or Password are required!',
+            });
         }
     }
     return (

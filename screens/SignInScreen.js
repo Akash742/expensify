@@ -5,6 +5,8 @@ import { colors } from '../theme';
 import BackButton from '../components/BackButton';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 function SignInScreen(props) {
     const[ email, setEmail ] = useState('');
@@ -12,14 +14,13 @@ function SignInScreen(props) {
 
     const navigation = useNavigation();
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         if(email && password)
         {
             //Good to Go
             console.log("Email: ", email);
             console.log("Password: ", password);
-            
-            navigation.navigate('Home');
+            await signInWithEmailAndPassword(auth, email, password);
         }
         else
         {
