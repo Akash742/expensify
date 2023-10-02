@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import ScreenWrapper from "../components/ScreenWrapper";
 import { colors } from "../theme";
 import EmptyList from "../components/EmptyList";
 import BackButton from "../components/BackButton";
 import ExpenseCard from "../components/ExpenseCard";
+import { getDocs, query, where } from "firebase/firestore";
+import { expensesRef } from "../config/firebase";
 
 const items = [
     {
@@ -31,6 +33,28 @@ const items = [
 function TripExpensesScreen(props) {
   const navigation = useNavigation();
   const { id, place, country } = props.route.params;
+  const [expenses, setExpenses] = useState([]);
+
+  const isFocused = useIsFocused();
+
+  const fetchExpenses = async() => {
+    const q = query(expensesRef, where("tripId", "==", id));
+    const querySnapshot = await getDocs(q);
+    let data = [];
+
+    querySnapshot.forEach((doc) => {
+      data.push({...doc.data(), id: doc.id});
+    })
+
+    setExpenses(data);
+  }
+
+  useEffect(() => {
+    if(isFocused)
+    {
+      fetchExpenses();
+    }
+  }, [isFocused])
 
   return (
     <ScreenWrapper className="flex-1">
@@ -56,7 +80,7 @@ function TripExpensesScreen(props) {
               Expenses
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("AddExpense")}
+              onPress={() => navigation.navigate("AddExpense", {id, place, country})}
               className="p-2 px-3 bg-white border border-gray-200 rounded-full"
             >
               <Text className={colors.heading}>Add Expenses</Text>
@@ -68,7 +92,7 @@ function TripExpensesScreen(props) {
             }}
           >
             <FlatList
-              data={items}
+              data={expenses}
               ListEmptyComponent={
                 <EmptyList message={"You haven't recorded any expenses yet"} />
               }
